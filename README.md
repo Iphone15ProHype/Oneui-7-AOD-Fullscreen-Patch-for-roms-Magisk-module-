@@ -3,7 +3,7 @@
 A universal Magisk module for **One UI 7** devices that enables **AOD fullscreen wallpapers** by patching `/system/etc/floating_feature.xml` systemlessly. Only the AOD line is modified, preserving all other device-specific settings.
 
 **Disclaimer:**
-I am **not responsible** for any bricked devices. This is a small personal project I decided to make public and open source for anyone to use.
+I am **not responsible** for any bricked devices or other problems caused by the module. This is a small personal project I decided to make public and open source for anyone to use.
 
 ---
 
