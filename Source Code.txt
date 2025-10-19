@@ -1,5 +1,14 @@
-Post-fs-data.sh source code:
+   _____                             _____          _      
+  / ____|                           / ____|        | |     
+ | (___   ___  _   _ _ __ ___ ___  | |     ___   __| | ___ 
+  \___ \ / _ \| | | | '__/ __/ _ \ | |    / _ \ / _` |/ _ \
+  ____) | (_) | |_| | | | (_|  __/ | |___| (_) | (_| |  __/
+ |_____/ \___/ \__,_|_|  \___\___|  \_____\___/ \__,_|\___|
+                                                           
+______________________________________________________________________________________________________________________________________________________________________________________
+Post-fs-data.sh 
 
+code:
 #!/system/bin/sh
 # Universal One UI 7 AOD fullscreen patch
 
@@ -14,8 +23,33 @@ if [ -f "$XML_PATH" ]; then
     sed -i 's#<SEC_FLOATING_FEATURE_LCD_CONFIG_AOD_FULLSCREEN>0</SEC_FLOATING_FEATURE_LCD_CONFIG_AOD_FULLSCREEN>#<SEC_FLOATING_FEATURE_LCD_CONFIG_AOD_FULLSCREEN>1</SEC_FLOATING_FEATURE_LCD_CONFIG_AOD_FULLSCREEN>#' "$TMP_PATH"
 fi
 
-Service.sh source code:
+______________________________________________________________________________________________________________________________________________________________________________________
+explanation:
 
+1. `#!/system/bin/sh` → Tells the system this is a shell script.
+
+2. `PATHS=( ... )` → Defines an array of possible XML locations on One UI devices. Some devices keep it in `/system/etc`, others in `/vendor/etc` or `/odm/etc`.
+
+3. `MODULE_XML_DIR="$MAGISK_MODULE_PATH/system/etc"` → Path inside the module where the modified XML will be stored. `$MAGISK_MODULE_PATH` is the module’s folder inside `/data/adb/modules/`.
+
+4. `mkdir -p "$MODULE_XML_DIR"` → Creates the directory if it doesn’t exist (prevents errors).
+
+5. `for XML_PATH in "${PATHS[@]}"; do` → Loop through each possible XML location.
+
+6. `if [ -f "$XML_PATH" ]; then` → Checks if the XML exists at that path.
+
+7. `cp "$XML_PATH" "$MODULE_XML_DIR/floating_feature.xml"` → Copies the existing XML **from the device** to the module folder.
+
+8. `chmod 644 "$MODULE_XML_DIR/floating_feature.xml"` → Sets the correct **permissions** so the system can read it.
+
+9. `sed -i 's#<SEC_FLOATING_FEATURE_LCD_CONFIG_AOD_FULLSCREEN>0</SEC_FLOATING_FEATURE_LCD_CONFIG_AOD_FULLSCREEN>#<SEC_FLOATING_FEATURE_LCD_CONFIG_AOD_FULLSCREEN>1</SEC_FLOATING_FEATURE_LCD_CONFIG_AOD_FULLSCREEN>#' "$MODULE_XML_DIR/floating_feature.xml"` → Patches the AOD line from `0` → `1`.
+
+10. `break` → Stops looping after the first valid XML path is found.
+
+______________________________________________________________________________________________________________________________________________________________________________________
+Service.sh
+
+Code:
 #!/system/bin/sh
 # Mount patched XML at boot
 MOD_XML="/data/adb/modules/floating_feature_aod_patch/system/etc/floating_feature.xml"
@@ -23,4 +57,66 @@ if [ -f "$MOD_XML" ]; then
     mount -o bind "$MOD_XML" /system/etc/floating_feature.xml
 fi
 
+______________________________________________________________________________________________________________________________________________________________________________________
+explantion:
 
+1. `#!/system/bin/sh` → Shell script header.
+
+2. `MODULE_XML="$MAGISK_MODULE_PATH/system/etc/floating_feature.xml"` → Points to the patched XML inside the module.
+
+3. `if [ -f "$MODULE_XML" ]; then` → Checks if the patched XML exists.
+
+4. `if [ -f "/system/etc/floating_feature.xml" ]; then … elif … fi` → Detects where the **original XML exists** on the device.
+
+5. `mount -o bind "$MODULE_XML" /system/etc/floating_feature.xml` → **Systemlessly overlays** the patched XML over the original system file.
+
+In conclusion:
+ This ensures the patched XML is active at boot.
+ Magisk’s systemless mount makes the modification effective without touching the real system partition.
+
+
+______________________________________________________________________________________________________________________________________________________________________________________
+module.prop
+
+code:
+ini
+id=floating_feature_aod_patch
+name=Floating Feature AOD Fullscreen Patch
+version=1.0
+versionCode=1
+author=Iphone15ProHype
+description=Edits the Android /system/vendor/etc/floating_feature.xml file, enabling AOD fullscreen wallpapers on all One UI devices.
+
+
+______________________________________________________________________________________________________________________________________________________________________________________
+Explanation:
+
+1.`id=floating_feature_aod_patch` → **Unique identifier** for the module in Magisk. Magisk uses this internally.
+2.`name=Floating Feature AOD Fullscreen Patch` → **Display name** shown in Magisk modules.
+3.`version=1.0` → Human-readable version of the module.
+4.`versionCode=1` → Numeric version code used internally by Magisk.
+5. `author=Iphone15ProHype` → The creator’s name.
+6.`description=…` → A brief description of what the module does; shown in Magisk UI.
+
+
+______________________________________________________________________________________________________________________________________________________________________________________
+Folder structure:
+
+FloatingFeaturePatch_AOD_Universal/
+├── module.prop
+├── post-fs-data.sh
+├── service.sh
+└── README.md
+
+
+
+______________________________________________________________________________________________________________________________________________________________________________________
+How it all works put together:
+
+1. Magisk loads the module at boot.
+2. post-fs-data.sh copies the original XML and patches only the AOD line.
+3. service.sh mounts the patched XML over the system file so the system reads the modified version.
+4. The rest of the XML stays untouched, making it safe and universal.
+______________________________________________________________________________________________________________________________________________________________________________________
+
+Sincerly -Iphone15ProHype
