@@ -47,10 +47,12 @@ I am **not responsible** for any bricked devices. This is a small personal proje
    * AOD fullscreen wallpapers should now display correctly.
    * You can check `/data/adb/modules/floating_feature_aod_patch/system/etc/floating_feature.xml` to confirm that `<SEC_FLOATING_FEATURE_LCD_CONFIG_AOD_FULLSCREEN>` is set to `1`.
 
----
-
 **Need help?**
 If it’s not working, join my Discord server (link in profile).
+
+**FunFact:** This module was originally made for my Samsung S20+ 5G on Extreme ROM Nexus v.2.6.1  
+(I recommend using this exact ROM with the module)
+
 
 ---
 
