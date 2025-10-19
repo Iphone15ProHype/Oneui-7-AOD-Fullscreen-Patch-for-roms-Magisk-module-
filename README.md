@@ -9,10 +9,10 @@ I am **not responsible** for any bricked devices or other problems caused by the
 
 ## Requirements
 
-* **Device:** Samsung device running **One UI 7 / Android 12+**
+* **Device:** Samsung device running **One UI 7**
 
   * The module is built for the One UI 7 XML structure.
-  * Other Android versions or older One UI versions **may not work**.
+  * Other Android versions or older One UI versions **may/ may not work** (Depends on multiple factors).
 * **Root:** Device must be rooted via **Magisk**
 
   * Only Magisk supports the systemless overlay required by this module.
