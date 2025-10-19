@@ -1,0 +1,26 @@
+Post-fs-data.sh source code:
+
+#!/system/bin/sh
+# Universal One UI 7 AOD fullscreen patch
+
+XML_PATH="/system/etc/floating_feature.xml"
+TMP_PATH="/data/adb/modules/floating_feature_aod_patch/system/etc/floating_feature.xml"
+
+mkdir -p "$(dirname "$TMP_PATH")"
+
+if [ -f "$XML_PATH" ]; then
+    cp "$XML_PATH" "$TMP_PATH"
+    chmod 644 "$TMP_PATH"
+    sed -i 's#<SEC_FLOATING_FEATURE_LCD_CONFIG_AOD_FULLSCREEN>0</SEC_FLOATING_FEATURE_LCD_CONFIG_AOD_FULLSCREEN>#<SEC_FLOATING_FEATURE_LCD_CONFIG_AOD_FULLSCREEN>1</SEC_FLOATING_FEATURE_LCD_CONFIG_AOD_FULLSCREEN>#' "$TMP_PATH"
+fi
+
+Service.sh source code:
+
+#!/system/bin/sh
+# Mount patched XML at boot
+MOD_XML="/data/adb/modules/floating_feature_aod_patch/system/etc/floating_feature.xml"
+if [ -f "$MOD_XML" ]; then
+    mount -o bind "$MOD_XML" /system/etc/floating_feature.xml
+fi
+
+
